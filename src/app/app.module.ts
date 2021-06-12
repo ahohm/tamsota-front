@@ -25,6 +25,8 @@ import { jqxNumberInputModule } from 'jqwidgets-ng/jqxnumberinput';
 import { NgxGaugeModule } from 'ngx-gauge';
 import { FinalGaugeComponent } from './components/content/final-gauge/final-gauge.component';
 import { GaugeChartModule } from 'angular-gauge-chart'
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 
 @NgModule({
@@ -45,6 +47,7 @@ import { GaugeChartModule } from 'angular-gauge-chart'
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     NgbModule,

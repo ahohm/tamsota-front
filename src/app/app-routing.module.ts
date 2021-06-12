@@ -21,7 +21,7 @@ const routes: Routes = [
 
   },
   {
-    path:'gge',
+    path:'chart',
     component: FinalGaugeComponent,
         canActivate: [AuthGuard],
 
