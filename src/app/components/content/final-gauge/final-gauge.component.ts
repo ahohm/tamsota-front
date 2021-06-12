@@ -8,8 +8,6 @@ import { DeviceService } from 'src/app/_services/device.service';
 import { jqxKnobComponent } from 'jqwidgets-ng/jqxknob';
 import { jqxNumberInputComponent } from 'jqwidgets-ng/jqxnumberinput';
 
-import { jqxGaugeComponent } from 'jqwidgets-ng/jqxgauge';
-import { jqxLinearGaugeComponent } from 'jqwidgets-ng/jqxlineargauge';
 import { WebSocketAPI } from 'src/app/_socket/WebSocketAPI ';
 
 @Component({
@@ -18,8 +16,12 @@ import { WebSocketAPI } from 'src/app/_socket/WebSocketAPI ';
   styleUrls: ['./final-gauge.component.css'],
 })
 export class FinalGaugeComponent implements OnInit, OnDestroy {
-  obj: any;
+  obj: any ={};
 
+  active: Boolean = false;
+  dn : string = "--";
+  ip : string = "--";
+  
   data: any = {
     DHT11: {
       Temperature: '0',
@@ -44,8 +46,8 @@ export class FinalGaugeComponent implements OnInit, OnDestroy {
     hasNeedle: true,
     needleColor: 'gray',
     needleUpdateSpeed: 1000,
-    arcColors: ['rgb(44, 151, 222)', 'lightgray'],
-    arcDelimiters: [30],
+    arcColors: ['rgb(255,69,0)', 'lightgray'],
+    arcDelimiters: [0.1],
     rangeLabel: ['0', '100'],
     needleStartValue: 0,
   };
@@ -73,43 +75,26 @@ export class FinalGaugeComponent implements OnInit, OnDestroy {
     this.webSocketAPI = new WebSocketAPI();
     this.connect();
 
-    // todo => 
-    if (this.obj.dn != undefined) {
-      this.device.dn = this.obj.dn;
-    }
-    if (this.obj.ip != undefined) {
-      this.device.ip = this.obj.ip;
-    }
-
-    if (this.obj.POWER1 != undefined) {
-      let p: String = new String(this.obj.POWER1);
-      console.log('actual value ' + p);
-      if (p.includes('ON')) {
-        console.log('ON test ' + p.includes('ON'));
-        this.data.power = true;
-      } else if (p.includes('OFF')) {
-        console.log('OFF test ' + p.includes('OFF'));
-        this.data.power = false;
-
-        this.data.DHT11.Temperature = 0;
-      }
-    }
-
-    if (this.obj.DHT11.Temperature != undefined) {
-      console.log('sdsdsd' + this.obj.DHT11.Temperature);
-      let temp = this.obj.DHT11.Temperature;
-      this.needleValue = +this.obj.DHT11.Temperature;
-      this.data.DHT11.Temperature = this.obj.DHT11.Temperature;
-    }
   }
 
   connect() {
     return this.webSocketAPI._connect((val: any) => {
-      this.obj = val;
-      this.device =val
-      this.data = val
+      if(typeof(val.POWER1) === "string"  && val.POWER1 === "ON"){
+        this.active = true;
+      }else if(typeof(val.POWER1) === "string"  && val.POWER1 === "OFF"){
+        this.active = false;
+      }else{
+        if(typeof(val.dn) === "string"){
+          this.dn = val.dn;
+          this.ip = val.ip;
+        }else{
+          this.needleValue = val.DHT11.Temperature;
+          this.options.arcDelimiters = [val.DHT11.Temperature];
+          this.bottomLabel = ''+val.DHT11.Temperature;
+        }
+      }
 
-      console.log(val);
+      console.log();
     });
   }
 
@@ -189,7 +174,7 @@ export class FinalGaugeComponent implements OnInit, OnDestroy {
   }
   onChagePowerState(v: boolean) {
     console.log(v);
-    this.data.power = v;
+    this.active = v;
     if (!v) {
       this.data.DHT11.Temperature = 0;
     }

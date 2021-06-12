@@ -21,7 +21,7 @@ const routes: Routes = [
 
   },
   {
-    path:'gauge2',
+    path:'gge',
     component: FinalGaugeComponent,
         canActivate: [AuthGuard],
 

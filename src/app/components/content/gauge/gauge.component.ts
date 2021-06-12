@@ -235,35 +235,30 @@ export class GaugeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   connect() {
-    return this.webSocketAPI._connect((val: any) => {
-      if (val.dn != undefined) {
-        this.device.dn = val.dn;
-      }
-      if (val.ip != undefined) {
-        this.device.ip = val.ip;
-      }
-
-      if (val.POWER1 != undefined) {
-        let p: String = new String(val.POWER1);
-        console.log('actual value ' + p);
-        if (p.includes('ON')) {
-          console.log('ON test ' + p.includes('ON'));
+  
+      return this.webSocketAPI._connect((val: any) => {
+        if(typeof(val.POWER1) === "string"  && val.POWER1 === "ON"){
           this.data.power = true;
-        } else if (p.includes('OFF')) {
-          console.log('OFF test ' + p.includes('OFF'));
+        }else if(typeof(val.POWER1) === "string"  && val.POWER1 === "OFF"){
           this.data.power = false;
-
           this.data.DHT11.Temperature = 0;
+        }else{
+          if(typeof(val.dn) === "string"){
+            this.device.dn = val.dn;
+            this.device.ip = val.ip;
+          }else{
+            //this.needleValue = val.DHT11.Temperature;
+            //this.options.arcDelimiters = [val.DHT11.Temperature];
+            //this.bottomLabel = ''+val.DHT11.Temperature;
+            let temp = val.DHT11.Temperature;
+            this.data.DHT11.Temperature = val.DHT11.Temperature;
+            this.myGauge.value(temp);
+          }
         }
-      }
+  
+        console.log();
+      });
 
-      if (val.DHT11.Temperature != undefined) {
-        console.log(val.DHT11.Temperature);
-        let temp = val.DHT11.Temperature;
-        this.data.DHT11.Temperature = val.DHT11.Temperature;
-        this.myGauge.value(temp);
-      }
-    });
   }
 
   //-------------------------

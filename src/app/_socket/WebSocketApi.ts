@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { GaugeComponent } from '../components/content/gauge/gauge.component';
 
 export class WebSocketAPI {
-    webSocketEndPoint: string = 'http://localhost:8080/websocket-example';
+    webSocketEndPoint: string = 'http://138.197.130.191/api//websocket-example';
     topic: string = "/topic/user";
     stompClient: any;
     appComponent: GaugeComponent;

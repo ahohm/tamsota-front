@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 
-const AUTH_API = 'https://138.197.130.191/api';
+const AUTH_API = 'http://138.197.130.191/api';
 
 
 const httpOptions = {
